@@ -4,16 +4,25 @@ import { BiCopyAlt, BiPlayCircle } from 'react-icons/bi';
 import Markdown from 'react-markdown';
 import rehypeRaw from 'rehype-raw';
 import remarkGfm from 'remark-gfm';
+import { useSettings } from '@/lib/useSettings';
 
 export const Chat = ({ data, player }) => {
   const { t } = useTranslation();
+  const { Language } = useSettings();
   const handleCopy = () => {
     navigator.clipboard.writeText(
       data.question + '\n\nmodel:' + data.model + '\n\n' + data.answer
     );
   };
   const handlePlay = () => {
-    player(data.answer);
+    // player(data.answer);
+    if ('speechSynthesis' in window) {
+      const utterance = new SpeechSynthesisUtterance(data.answer);
+      utterance.lang = "zh-CN"
+      speechSynthesis.speak(utterance);
+  } else {
+      alert('Sorry, your browser does not support speech synthesis.');
+  }
   };
   return (
     <>
